@@ -20,9 +20,12 @@
 #include "RiaDateTimeDefines.h"
 #include "RiaPlotDefines.h"
 
+#include <qwt_axis_id.h>
 #include <qwt_date.h>
 #include <qwt_plot.h>
 #include <qwt_plot_shapeitem.h>
+
+class RiuPlotAxis;
 
 class RiuQwtPlotTools
 {
@@ -59,7 +62,9 @@ public:
                                                QColor         color,
                                                Qt::BrushStyle brushStyle = Qt::SolidPattern );
 
-    static QwtAxis::Position    toQwtPlotAxis( RiaDefines::PlotAxis );
+    static QwtAxisId         toQwtPlotAxis( RiuPlotAxis riuPlotAxis );
+    static QwtAxis::Position toQwtPlotAxisEnum( RiaDefines::PlotAxis riaPlotAxis );
+
     static RiaDefines::PlotAxis fromQwtPlotAxis( QwtAxis::Position );
 };
 

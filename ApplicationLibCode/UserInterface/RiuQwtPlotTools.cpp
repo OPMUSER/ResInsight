@@ -22,6 +22,7 @@
 #include "RiaApplication.h"
 #include "RiaPreferences.h"
 #include "RiaQDateTimeTools.h"
+#include "RiuPlotAxis.h"
 
 #include "qwt_date_scale_draw.h"
 #include "qwt_date_scale_engine.h"
@@ -31,6 +32,7 @@
 #include "qwt_plot_shapeitem.h"
 #include "qwt_scale_widget.h"
 
+#include "qwt_axis.h"
 #include <QRegExp>
 #include <vector>
 
@@ -238,16 +240,28 @@ QwtPlotShapeItem* RiuQwtPlotTools::createBoxShape( const QString& label,
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
-QwtAxis::Position RiuQwtPlotTools::toQwtPlotAxis( RiaDefines::PlotAxis axis )
+QwtAxisId RiuQwtPlotTools::toQwtPlotAxis( RiuPlotAxis axis )
 {
-    if ( axis == RiaDefines::PlotAxis::PLOT_AXIS_LEFT )
-        return QwtAxis::YLeft;
-    else if ( axis == RiaDefines::PlotAxis::PLOT_AXIS_RIGHT )
-        return QwtAxis::YRight;
-    else if ( axis == RiaDefines::PlotAxis::PLOT_AXIS_BOTTOM )
-        return QwtAxis::XBottom;
+    QwtAxis::Position qwtPosition = toQwtPlotAxisEnum( axis.axis() );
 
-    return QwtAxis::XTop;
+    return { qwtPosition, axis.index() };
+}
+
+//--------------------------------------------------------------------------------------------------
+///
+//--------------------------------------------------------------------------------------------------
+QwtAxis::Position RiuQwtPlotTools::toQwtPlotAxisEnum( RiaDefines::PlotAxis riaPlotAxis )
+{
+    QwtAxis::Position qwtPosition = QwtAxis::YLeft;
+
+    if ( riaPlotAxis == RiaDefines::PlotAxis::PLOT_AXIS_LEFT )
+        qwtPosition = QwtAxis::YLeft;
+    else if ( riaPlotAxis == RiaDefines::PlotAxis::PLOT_AXIS_RIGHT )
+        qwtPosition = QwtAxis::YRight;
+    else if ( riaPlotAxis == RiaDefines::PlotAxis::PLOT_AXIS_BOTTOM )
+        qwtPosition = QwtAxis::XBottom;
+
+    return qwtPosition;
 }
 
 //--------------------------------------------------------------------------------------------------
