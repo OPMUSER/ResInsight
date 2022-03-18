@@ -345,12 +345,12 @@ void RiuQwtPlotWidget::setAxisLabelsAndTicksEnabled( RiuPlotAxis axis, bool enab
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotWidget::enableGridLines( RiuPlotAxis axis, bool majorGridLines, bool minorGridLines )
 {
-    QwtPlotItemList plotItems = m_plot->itemList( QwtPlotItem::Rtti_PlotGrid );
-    QwtPlot::Axis   qwtAxis   = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    QwtPlotItemList   plotItems = m_plot->itemList( QwtPlotItem::Rtti_PlotGrid );
+    QwtAxis::Position qwtAxis   = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
     for ( QwtPlotItem* plotItem : plotItems )
     {
         QwtPlotGrid* grid = static_cast<QwtPlotGrid*>( plotItem );
-        if ( qwtAxis == QwtPlot::xTop || qwtAxis == QwtPlot::xBottom )
+        if ( qwtAxis == QwtAxis::XTop || qwtAxis == QwtAxis::XBottom )
         {
             grid->setXAxis( qwtAxis );
             grid->enableX( majorGridLines );
@@ -376,7 +376,7 @@ void RiuQwtPlotWidget::setMajorAndMinorTickIntervals( RiuPlotAxis axis,
                                                       double      minValue,
                                                       double      maxValue )
 {
-    QwtPlot::Axis            qwtAxis     = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    QwtAxis::Position        qwtAxis     = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
     RiuQwtLinearScaleEngine* scaleEngine = dynamic_cast<RiuQwtLinearScaleEngine*>( m_plot->axisScaleEngine( qwtAxis ) );
     if ( scaleEngine )
     {
@@ -398,7 +398,7 @@ void RiuQwtPlotWidget::setMajorAndMinorTickIntervalsAndRange( RiuPlotAxis axis,
                                                               double      rangeMin,
                                                               double      rangeMax )
 {
-    QwtPlot::Axis            qwtAxis     = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    QwtAxis::Position        qwtAxis     = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
     RiuQwtLinearScaleEngine* scaleEngine = dynamic_cast<RiuQwtLinearScaleEngine*>( m_plot->axisScaleEngine( qwtAxis ) );
     if ( scaleEngine )
     {
@@ -442,7 +442,7 @@ double RiuQwtPlotWidget::majorTickInterval( RiuPlotAxis axis ) const
 //--------------------------------------------------------------------------------------------------
 double RiuQwtPlotWidget::minorTickInterval( RiuPlotAxis axis ) const
 {
-    QwtScaleDiv   scaleDiv   = m_plot->axisScaleDiv( QwtPlot::xTop );
+    QwtScaleDiv   scaleDiv   = m_plot->axisScaleDiv( QwtAxis::XTop );
     QList<double> minorTicks = scaleDiv.ticks( QwtScaleDiv::MinorTick );
     if ( minorTicks.size() < 2 ) return 0.0;
 
@@ -457,8 +457,8 @@ int RiuQwtPlotWidget::axisExtent( RiuPlotAxis axis ) const
     auto [rangeMin, rangeMax] = axisRange( axis );
     if ( std::abs( rangeMax - rangeMin ) < 1.0e-14 ) return 0;
 
-    int           lineExtent = 0;
-    QwtPlot::Axis qwtAxis    = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    int               lineExtent = 0;
+    QwtAxis::Position qwtAxis    = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
 
     if ( m_plot->axisScaleDraw( qwtAxis )->hasComponent( QwtAbstractScaleDraw::Ticks ) )
     {
@@ -655,9 +655,9 @@ void RiuQwtPlotWidget::applyPlotTitleToQwt()
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotWidget::applyAxisTitleToQwt( RiuPlotAxis axis )
 {
-    QString       titleToApply = m_axisTitlesEnabled[axis] ? m_axisTitles[axis] : QString( "" );
-    QwtPlot::Axis qwtAxis      = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
-    QwtText       axisTitle    = m_plot->axisTitle( qwtAxis );
+    QString           titleToApply = m_axisTitlesEnabled[axis] ? m_axisTitles[axis] : QString( "" );
+    QwtAxis::Position qwtAxis      = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    QwtText           axisTitle    = m_plot->axisTitle( qwtAxis );
     if ( titleToApply != axisTitle.text() )
     {
         axisTitle.setText( titleToApply );
@@ -780,7 +780,7 @@ RimViewWindow* RiuQwtPlotWidget::ownerViewWindow() const
 void RiuQwtPlotWidget::onAxisSelected( QwtScaleWidget* scale, bool toggleItemInSelection )
 {
     int axisId = -1;
-    for ( int i = 0; i < QwtPlot::axisCnt; ++i )
+    for ( int i = 0; i < QwtAxis::PositionCnt; ++i )
     {
         if ( scale == m_plot->axisWidget( i ) )
         {
@@ -795,8 +795,8 @@ void RiuQwtPlotWidget::onAxisSelected( QwtScaleWidget* scale, bool toggleItemInS
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotWidget::recalculateAxisExtents( RiuPlotAxis axis )
 {
-    QwtPlot::Axis qwtAxis = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
-    if ( qwtAxis == QwtPlot::yLeft || qwtAxis == QwtPlot::yRight )
+    QwtAxis::Position qwtAxis = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    if ( qwtAxis == QwtAxis::YLeft || qwtAxis == QwtAxis::YRight )
     {
         int extent = axisExtent( axis );
         m_plot->axisScaleDraw( qwtAxis )->setMinimumExtent( extent );
@@ -845,8 +845,8 @@ void RiuQwtPlotWidget::findClosestPlotItem( const QPoint& pos,
         else if ( ( *it )->rtti() == QwtPlotItem::Rtti_PlotShape )
         {
             QwtPlotShapeItem* shapeItem = static_cast<QwtPlotShapeItem*>( *it );
-            QPointF           scalePos( m_plot->invTransform( QwtPlot::xBottom, pos.x() ),
-                              m_plot->invTransform( QwtPlot::yLeft, pos.y() ) );
+            QPointF           scalePos( m_plot->invTransform( QwtAxis::XBottom, pos.x() ),
+                              m_plot->invTransform( QwtAxis::YLeft, pos.y() ) );
             if ( shapeItem->shape().boundingRect().contains( scalePos ) )
             {
                 *closestItem       = *it;
@@ -856,8 +856,8 @@ void RiuQwtPlotWidget::findClosestPlotItem( const QPoint& pos,
         else if ( ( *it )->rtti() == QwtPlotItem::Rtti_PlotBarChart )
         {
             QwtPlotBarChart* barChart = static_cast<QwtPlotBarChart*>( *it );
-            QPointF          scalePos( m_plot->invTransform( QwtPlot::xBottom, pos.x() ),
-                              m_plot->invTransform( QwtPlot::yLeft, pos.y() ) );
+            QPointF          scalePos( m_plot->invTransform( QwtAxis::XBottom, pos.x() ),
+                              m_plot->invTransform( QwtAxis::YLeft, pos.y() ) );
 
             bool horizontal = barChart->orientation() == Qt::Horizontal;
             for ( size_t i = 0; i < barChart->dataSize(); ++i )
@@ -1119,7 +1119,7 @@ void RiuQwtPlotWidget::setAxisScale( RiuPlotAxis axis, double min, double max )
 //--------------------------------------------------------------------------------------------------
 RiuQwtPlotWidget::AxisScaleType RiuQwtPlotWidget::axisScaleType( RiuPlotAxis axis ) const
 {
-    QwtPlot::Axis qwtAxis = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    QwtAxis::Position qwtAxis = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
 
     QwtLogScaleEngine*  logScaleEngine  = dynamic_cast<QwtLogScaleEngine*>( m_plot->axisScaleEngine( qwtAxis ) );
     QwtDateScaleEngine* dateScaleEngine = dynamic_cast<QwtDateScaleEngine*>( m_plot->axisScaleEngine( qwtAxis ) );
@@ -1136,7 +1136,7 @@ RiuQwtPlotWidget::AxisScaleType RiuQwtPlotWidget::axisScaleType( RiuPlotAxis axi
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotWidget::setAxisScaleType( RiuPlotAxis axis, RiuQwtPlotWidget::AxisScaleType axisScaleType )
 {
-    QwtPlot::Axis qwtAxis = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
+    QwtAxis::Position qwtAxis = RiuQwtPlotTools::toQwtPlotAxis( axis.axis() );
 
     if ( axisScaleType == AxisScaleType::LOGARITHMIC ) m_plot->setAxisScaleEngine( qwtAxis, new QwtLogScaleEngine );
     if ( axisScaleType == AxisScaleType::LINEAR ) m_plot->setAxisScaleEngine( qwtAxis, new QwtLinearScaleEngine );

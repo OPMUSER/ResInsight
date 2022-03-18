@@ -70,13 +70,13 @@ RiuMohrsCirclePlot::RiuMohrsCirclePlot( QWidget* parent )
 {
     RiuQwtPlotTools::setCommonPlotBehaviour( this );
 
-    enableAxis( QwtPlot::xBottom, true );
-    enableAxis( QwtPlot::yLeft, true );
-    enableAxis( QwtPlot::xTop, false );
-    enableAxis( QwtPlot::yRight, false );
+    enableAxis( QwtAxis::XBottom, true );
+    enableAxis( QwtAxis::YLeft, true );
+    enableAxis( QwtAxis::XTop, false );
+    enableAxis( QwtAxis::YRight, false );
 
-    setAxisTitle( QwtPlot::xBottom, "Effective Normal Stress" );
-    setAxisTitle( QwtPlot::yLeft, "Shear Stress" );
+    setAxisTitle( QwtAxis::XBottom, "Effective Normal Stress" );
+    setAxisTitle( QwtAxis::YLeft, "Shear Stress" );
 
     applyFontSizes( false );
 
@@ -459,7 +459,7 @@ void RiuMohrsCirclePlot::updateTransparentCurvesOnPrincipals()
         qVectorPoints.push_back( QPointF( mohrCircleInfo.principals[2], 0 ) );
 
         transparentCurve->setSamples( qVectorPoints );
-        transparentCurve->setYAxis( QwtPlot::yLeft );
+        transparentCurve->setYAxis( QwtAxis::YLeft );
         transparentCurve->setStyle( QwtPlotCurve::NoCurve );
         transparentCurve->setLegendAttribute( QwtPlotCurve::LegendNoAttribute );
 
@@ -715,8 +715,8 @@ void RiuMohrsCirclePlot::setAxesScaleAndReplot()
         yMaxDisplayed = heightToKeepAspectRatio;
     }
 
-    this->setAxisScale( QwtPlot::yLeft, 0, yMaxDisplayed );
-    this->setAxisScale( QwtPlot::xBottom, xMin, xMaxDisplayed );
+    this->setAxisScale( QwtAxis::YLeft, 0, yMaxDisplayed );
+    this->setAxisScale( QwtAxis::XBottom, xMin, xMaxDisplayed );
 
     this->replot();
 }

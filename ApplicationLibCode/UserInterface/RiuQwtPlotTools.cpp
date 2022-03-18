@@ -62,18 +62,18 @@ void RiuQwtPlotTools::setCommonPlotBehaviour( QwtPlot* plot )
     // Axis number font
     int   axisFontSize = caf::FontTools::absolutePointSize( RiaPreferences::current()->defaultPlotFontSize(),
                                                           caf::FontTools::RelativeSize::Medium );
-    QFont axisFont     = plot->axisFont( QwtPlot::xBottom );
+    QFont axisFont     = plot->axisFont( QwtAxis::XBottom );
     axisFont.setPixelSize( caf::FontTools::pointSizeToPixelSize( axisFontSize ) );
 
-    plot->setAxisFont( QwtPlot::xBottom, axisFont );
-    plot->setAxisFont( QwtPlot::xTop, axisFont );
-    plot->setAxisFont( QwtPlot::yLeft, axisFont );
-    plot->setAxisFont( QwtPlot::yRight, axisFont );
+    plot->setAxisFont( QwtAxis::XBottom, axisFont );
+    plot->setAxisFont( QwtAxis::XTop, axisFont );
+    plot->setAxisFont( QwtAxis::YLeft, axisFont );
+    plot->setAxisFont( QwtAxis::YRight, axisFont );
 
     // Axis title font
-    std::vector<QwtPlot::Axis> axes = { QwtPlot::xBottom, QwtPlot::xTop, QwtPlot::yLeft, QwtPlot::yRight };
+    std::vector<QwtAxis::Position> axes = { QwtAxis::XBottom, QwtAxis::XTop, QwtAxis::YLeft, QwtAxis::YRight };
 
-    for ( QwtPlot::Axis axis : axes )
+    for ( QwtAxis::Position axis : axes )
     {
         QwtText axisTitle     = plot->axisTitle( axis );
         QFont   axisTitleFont = axisTitle.font();
@@ -110,18 +110,18 @@ void RiuQwtPlotTools::setCommonPlotBehaviour( QwtPlot* plot )
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotTools::setDefaultAxes( QwtPlot* plot )
 {
-    plot->enableAxis( QwtPlot::xBottom, true );
-    plot->enableAxis( QwtPlot::yLeft, true );
-    plot->enableAxis( QwtPlot::xTop, false );
-    plot->enableAxis( QwtPlot::yRight, false );
+    plot->enableAxis( QwtAxis::XBottom, true );
+    plot->enableAxis( QwtAxis::YLeft, true );
+    plot->enableAxis( QwtAxis::XTop, false );
+    plot->enableAxis( QwtAxis::YRight, false );
 
-    plot->axisWidget( QwtPlot::xBottom )->setMargin( 0 );
-    plot->axisWidget( QwtPlot::yLeft )->setMargin( 0 );
-    plot->axisWidget( QwtPlot::xTop )->setMargin( 0 );
-    plot->axisWidget( QwtPlot::yRight )->setMargin( 0 );
+    plot->axisWidget( QwtAxis::XBottom )->setMargin( 0 );
+    plot->axisWidget( QwtAxis::YLeft )->setMargin( 0 );
+    plot->axisWidget( QwtAxis::XTop )->setMargin( 0 );
+    plot->axisWidget( QwtAxis::YRight )->setMargin( 0 );
 
-    plot->setAxisMaxMinor( QwtPlot::xBottom, 2 );
-    plot->setAxisMaxMinor( QwtPlot::yLeft, 3 );
+    plot->setAxisMaxMinor( QwtAxis::XBottom, 2 );
+    plot->setAxisMaxMinor( QwtAxis::YLeft, 3 );
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -151,8 +151,8 @@ void RiuQwtPlotTools::enableDateBasedBottomXAxis( QwtPlot*                      
     }
 
     QwtDateScaleEngine* scaleEngine = new QwtDateScaleEngine( Qt::UTC );
-    plot->setAxisScaleEngine( QwtPlot::xBottom, scaleEngine );
-    plot->setAxisScaleDraw( QwtPlot::xBottom, scaleDraw );
+    plot->setAxisScaleEngine( QwtAxis::XBottom, scaleEngine );
+    plot->setAxisScaleDraw( QwtAxis::XBottom, scaleDraw );
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -240,28 +240,28 @@ QwtPlotShapeItem* RiuQwtPlotTools::createBoxShape( const QString& label,
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
-QwtPlot::Axis RiuQwtPlotTools::toQwtPlotAxis( RiaDefines::PlotAxis axis )
+QwtAxis::Position RiuQwtPlotTools::toQwtPlotAxis( RiaDefines::PlotAxis axis )
 {
     if ( axis == RiaDefines::PlotAxis::PLOT_AXIS_LEFT )
-        return QwtPlot::yLeft;
+        return QwtAxis::YLeft;
     else if ( axis == RiaDefines::PlotAxis::PLOT_AXIS_RIGHT )
-        return QwtPlot::yRight;
+        return QwtAxis::YRight;
     else if ( axis == RiaDefines::PlotAxis::PLOT_AXIS_BOTTOM )
-        return QwtPlot::xBottom;
+        return QwtAxis::XBottom;
 
-    return QwtPlot::xTop;
+    return QwtAxis::XTop;
 }
 
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
-RiaDefines::PlotAxis RiuQwtPlotTools::fromQwtPlotAxis( QwtPlot::Axis axis )
+RiaDefines::PlotAxis RiuQwtPlotTools::fromQwtPlotAxis( QwtAxis::Position axis )
 {
-    if ( axis == QwtPlot::yLeft )
+    if ( axis == QwtAxis::YLeft )
         return RiaDefines::PlotAxis::PLOT_AXIS_LEFT;
-    else if ( axis == QwtPlot::yRight )
+    else if ( axis == QwtAxis::YRight )
         return RiaDefines::PlotAxis::PLOT_AXIS_RIGHT;
-    else if ( axis == QwtPlot::xBottom )
+    else if ( axis == QwtAxis::XBottom )
         return RiaDefines::PlotAxis::PLOT_AXIS_BOTTOM;
 
     return RiaDefines::PlotAxis::PLOT_AXIS_TOP;
