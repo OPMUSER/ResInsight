@@ -1053,13 +1053,6 @@ QwtPlot* RiuQwtPlotWidget::qwtPlot() const
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotWidget::ensureAxisIsCreated( RiuPlotAxis axis )
 {
-}
-
-//--------------------------------------------------------------------------------------------------
-///
-//--------------------------------------------------------------------------------------------------
-void RiuQwtPlotWidget::enableAxis( RiuPlotAxis axis, bool isEnabled )
-{
     int requiredCount = axis.index() + 1;
 
     auto qwtAxisId = RiuQwtPlotTools::toQwtPlotAxis( axis );
@@ -1067,6 +1060,14 @@ void RiuQwtPlotWidget::enableAxis( RiuPlotAxis axis, bool isEnabled )
     {
         m_plot->setAxesCount( qwtAxisId.pos, requiredCount );
     }
+}
+
+//--------------------------------------------------------------------------------------------------
+///
+//--------------------------------------------------------------------------------------------------
+void RiuQwtPlotWidget::enableAxis( RiuPlotAxis axis, bool isEnabled )
+{
+    ensureAxisIsCreated( axis );
 
     m_plot->setAxisVisible( RiuQwtPlotTools::toQwtPlotAxis( axis ), isEnabled );
 }
@@ -1199,7 +1200,7 @@ const QColor& RiuQwtPlotWidget::backgroundColor() const
 //--------------------------------------------------------------------------------------------------
 bool RiuQwtPlotWidget::isMultiAxisSupported() const
 {
-    return false;
+    return true;
 }
 
 //--------------------------------------------------------------------------------------------------
