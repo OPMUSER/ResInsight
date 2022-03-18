@@ -185,10 +185,8 @@ void RiuResultQwtPlot::setDefaults()
 {
     RiuQwtPlotTools::setCommonPlotBehaviour( this );
 
-    enableAxis( QwtAxis::XBottom, true );
-    enableAxis( QwtAxis::YLeft, true );
-    enableAxis( QwtAxis::XTop, false );
-    enableAxis( QwtAxis::YRight, false );
+    setAxesCount( QwtAxis::XBottom, 1 );
+    setAxesCount( QwtAxis::YLeft, 1 );
 
     QString dateFormat = RiaPreferences::current()->dateFormat();
     QString timeFormat = RiaPreferences::current()->timeFormat();

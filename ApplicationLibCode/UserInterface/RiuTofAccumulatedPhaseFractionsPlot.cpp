@@ -206,11 +206,9 @@ void RiuTofAccumulatedPhaseFractionsPlot::setDefaults()
     setCommonPlotBehaviour( this );
     setAxisTitle( QwtAxis::XBottom, "Years" );
 
-    enableAxis( QwtAxis::XBottom, true );
-    enableAxis( QwtAxis::YLeft, true );
+    setAxesCount( QwtAxis::XBottom, 1 );
+    setAxesCount( QwtAxis::YLeft, 1 );
     setAxisScale( QwtAxis::YLeft, 0, 1, 0.2 );
-    enableAxis( QwtAxis::XTop, false );
-    enableAxis( QwtAxis::YRight, false );
 
     setAxisMaxMinor( QwtAxis::XBottom, 2 );
     setAxisMaxMinor( QwtAxis::YLeft, 3 );

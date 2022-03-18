@@ -178,10 +178,8 @@ void RiuRelativePermeabilityPlotPanel::setPlotDefaults( QwtPlot* plot )
         plot->setTitle( plotTitle );
     }
 
-    plot->enableAxis( QwtAxis::XBottom, true );
-    plot->enableAxis( QwtAxis::YLeft, true );
-    plot->enableAxis( QwtAxis::XTop, false );
-    plot->enableAxis( QwtAxis::YRight, false );
+    plot->setAxesCount( QwtAxis::XBottom, 1 );
+    plot->setAxesCount( QwtAxis::YLeft, 1 );
 
     plot->setAxisMaxMinor( QwtAxis::XBottom, 2 );
     plot->setAxisMaxMinor( QwtAxis::YLeft, 3 );
@@ -460,7 +458,10 @@ void RiuRelativePermeabilityPlotPanel::plotCurvesInQwt( RiaDefines::EclipseUnitS
         }
     }
 
-    plot->enableAxis( QwtAxis::YRight, shouldEnableRightYAxis );
+    if ( shouldEnableRightYAxis )
+        plot->setAxesCount( QwtAxis::YRight, 1 );
+    else
+        plot->setAxesCount( QwtAxis::YRight, 0 );
 
     addTransparentCurve( plot, points, axes, logScaleLeftAxis );
 

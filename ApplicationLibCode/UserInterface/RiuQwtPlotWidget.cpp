@@ -780,7 +780,7 @@ RimViewWindow* RiuQwtPlotWidget::ownerViewWindow() const
 void RiuQwtPlotWidget::onAxisSelected( QwtScaleWidget* scale, bool toggleItemInSelection )
 {
     int axisId = -1;
-    for ( int i = 0; i < QwtAxis::PositionCnt; ++i )
+    for ( int i = 0; i < QwtAxis::AxisPositions; ++i )
     {
         if ( scale == m_plot->axisWidget( i ) )
         {
@@ -1062,7 +1062,7 @@ void RiuQwtPlotWidget::ensureAxisIsCreated( RiuPlotAxis axis )
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotWidget::enableAxis( RiuPlotAxis axis, bool isEnabled )
 {
-    m_plot->enableAxis( RiuQwtPlotTools::toQwtPlotAxis( axis.axis() ), isEnabled );
+    m_plot->setAxisVisible( RiuQwtPlotTools::toQwtPlotAxis( axis.axis() ), isEnabled );
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1070,7 +1070,7 @@ void RiuQwtPlotWidget::enableAxis( RiuPlotAxis axis, bool isEnabled )
 //--------------------------------------------------------------------------------------------------
 bool RiuQwtPlotWidget::axisEnabled( RiuPlotAxis axis ) const
 {
-    return m_plot->axisEnabled( RiuQwtPlotTools::toQwtPlotAxis( axis.axis() ) );
+    return m_plot->isAxisVisible( RiuQwtPlotTools::toQwtPlotAxis( axis.axis() ) );
 }
 
 //--------------------------------------------------------------------------------------------------

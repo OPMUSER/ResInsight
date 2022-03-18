@@ -110,10 +110,8 @@ void RiuQwtPlotTools::setCommonPlotBehaviour( QwtPlot* plot )
 //--------------------------------------------------------------------------------------------------
 void RiuQwtPlotTools::setDefaultAxes( QwtPlot* plot )
 {
-    plot->enableAxis( QwtAxis::XBottom, true );
-    plot->enableAxis( QwtAxis::YLeft, true );
-    plot->enableAxis( QwtAxis::XTop, false );
-    plot->enableAxis( QwtAxis::YRight, false );
+    plot->setAxesCount( QwtAxis::XBottom, 1 );
+    plot->setAxesCount( QwtAxis::YLeft, 1 );
 
     plot->axisWidget( QwtAxis::XBottom )->setMargin( 0 );
     plot->axisWidget( QwtAxis::YLeft )->setMargin( 0 );
