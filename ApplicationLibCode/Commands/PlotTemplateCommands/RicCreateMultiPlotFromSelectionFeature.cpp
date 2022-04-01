@@ -23,18 +23,11 @@
 
 #include "RicSummaryPlotTemplateTools.h"
 
-#include "PlotTemplates/RimPlotTemplateFileItem.h"
-#include "RimMainPlotCollection.h"
-#include "RimProject.h"
-#include "RimSummaryAddressCollection.h"
-#include "RimSummaryCase.h"
 #include "RimSummaryMultiPlot.h"
-#include "RimSummaryMultiPlotCollection.h"
 
 #include "RiuPlotMainWindow.h"
 #include "RiuPlotMainWindowTools.h"
 
-#include "cafPdmUiPropertyViewDialog.h"
 #include "cafSelectionManager.h"
 
 #include <QAction>
@@ -54,69 +47,10 @@ bool RicCreateMultiPlotFromSelectionFeature::isCommandEnabled()
 //--------------------------------------------------------------------------------------------------
 void RicCreateMultiPlotFromSelectionFeature::onActionTriggered( bool isChecked )
 {
-    QString fileName           = RicSummaryPlotTemplateTools::selectPlotTemplatePath();
-    auto    sumCases           = RicSummaryPlotTemplateTools::selectedSummaryCases();
-    auto    sumCaseCollections = RicSummaryPlotTemplateTools::selectedSummaryCaseCollections();
+    QString fileName       = RicSummaryPlotTemplateTools::selectPlotTemplatePath();
+    auto    newSummaryPlot = RicSummaryPlotTemplateTools::createMultiPlotFromTemplateAndSelection( fileName );
 
-    auto summaryAddressCollections = RicSummaryPlotTemplateTools::selectedSummaryAddressCollections();
-
-    std::vector<QString>                wellNames;
-    std::vector<QString>                wellGroupNames;
-    std::vector<QString>                regions;
-    std::set<RimSummaryCase*>           caseSet;
-    std::set<RimSummaryCaseCollection*> caseCollectionSet;
-
-    for ( auto a : summaryAddressCollections )
-    {
-        if ( a->contentType() == RimSummaryAddressCollection::CollectionContentType::WELL )
-        {
-            wellNames.push_back( a->name() );
-        }
-        else if ( a->contentType() == RimSummaryAddressCollection::CollectionContentType::WELL_GROUP )
-        {
-            wellGroupNames.push_back( a->name() );
-        }
-        else if ( a->contentType() == RimSummaryAddressCollection::CollectionContentType::REGION )
-        {
-            regions.push_back( a->name() );
-        }
-
-        auto sumCase = RiaSummaryTools::summaryCaseById( a->caseId() );
-        if ( sumCase ) caseSet.insert( sumCase );
-
-        auto ensemble = RiaSummaryTools::ensembleById( a->ensembleId() );
-        if ( ensemble ) caseCollectionSet.insert( ensemble );
-    }
-
-    for ( auto sumCase : caseSet )
-    {
-        sumCases.push_back( sumCase );
-    }
-    for ( auto sumCaseCollection : caseCollectionSet )
-    {
-        sumCaseCollections.push_back( sumCaseCollection );
-    }
-
-    auto proj        = RimProject::current();
-    auto collections = proj->mainPlotCollection()->summaryMultiPlotCollection();
-
-    auto newSummaryPlot = RicSummaryPlotTemplateTools::createMultiPlotFromTemplateFile( fileName );
-    if ( !newSummaryPlot ) return;
-
-    collections->addSummaryMultiPlot( newSummaryPlot );
-    newSummaryPlot->resolveReferencesRecursively();
-
-    RicSummaryPlotTemplateTools::setValuesForPlaceholders( newSummaryPlot,
-                                                           sumCases,
-                                                           sumCaseCollections,
-                                                           wellNames,
-                                                           wellGroupNames,
-                                                           regions );
-    newSummaryPlot->initAfterReadRecursively();
-    newSummaryPlot->loadDataAndUpdate();
-    collections->updateConnectedEditors();
-
-    RiuPlotMainWindowTools::selectAsCurrentItem( newSummaryPlot );
+    if ( newSummaryPlot ) RiuPlotMainWindowTools::selectAsCurrentItem( newSummaryPlot );
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -124,6 +58,6 @@ void RicCreateMultiPlotFromSelectionFeature::onActionTriggered( bool isChecked )
 //--------------------------------------------------------------------------------------------------
 void RicCreateMultiPlotFromSelectionFeature::setupActionLook( QAction* actionToSetup )
 {
-    actionToSetup->setText( "Create Summary MultiPlot from Template" );
+    actionToSetup->setText( "Create Summary Plot from Template" );
     actionToSetup->setIcon( QIcon( ":/SummaryTemplate16x16.png" ) );
 }

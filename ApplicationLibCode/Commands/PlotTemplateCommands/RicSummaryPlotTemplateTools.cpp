@@ -22,6 +22,7 @@
 #include "RiaLogging.h"
 #include "RiaPreferences.h"
 #include "RiaSummaryAddressAnalyzer.h"
+#include "RiaSummaryTools.h"
 
 #include "RicSelectPlotTemplateUi.h"
 
@@ -37,16 +38,88 @@
 #include "RimSummaryCase.h"
 #include "RimSummaryCurve.h"
 #include "RimSummaryMultiPlot.h"
+#include "RimSummaryMultiPlotCollection.h"
 #include "RimSummaryPlot.h"
 #include "RimSummaryPlotCollection.h"
 
 #include "RiuPlotMainWindow.h"
+#include "RiuPlotMainWindowTools.h"
 
 #include "cafPdmUiPropertyViewDialog.h"
 #include "cafSelectionManager.h"
 
 #include <QFile>
 #include <QRegularExpression>
+
+//--------------------------------------------------------------------------------------------------
+///
+//--------------------------------------------------------------------------------------------------
+RimSummaryMultiPlot* RicSummaryPlotTemplateTools::createMultiPlotFromTemplateAndSelection( const QString& fileName )
+{
+    auto sumCases           = RicSummaryPlotTemplateTools::selectedSummaryCases();
+    auto sumCaseCollections = RicSummaryPlotTemplateTools::selectedSummaryCaseCollections();
+
+    auto summaryAddressCollections = RicSummaryPlotTemplateTools::selectedSummaryAddressCollections();
+
+    std::vector<QString>                wellNames;
+    std::vector<QString>                wellGroupNames;
+    std::vector<QString>                regions;
+    std::set<RimSummaryCase*>           caseSet;
+    std::set<RimSummaryCaseCollection*> caseCollectionSet;
+
+    for ( auto a : summaryAddressCollections )
+    {
+        if ( a->contentType() == RimSummaryAddressCollection::CollectionContentType::WELL )
+        {
+            wellNames.push_back( a->name() );
+        }
+        else if ( a->contentType() == RimSummaryAddressCollection::CollectionContentType::WELL_GROUP )
+        {
+            wellGroupNames.push_back( a->name() );
+        }
+        else if ( a->contentType() == RimSummaryAddressCollection::CollectionContentType::REGION )
+        {
+            regions.push_back( a->name() );
+        }
+
+        auto sumCase = RiaSummaryTools::summaryCaseById( a->caseId() );
+        if ( sumCase ) caseSet.insert( sumCase );
+
+        auto ensemble = RiaSummaryTools::ensembleById( a->ensembleId() );
+        if ( ensemble ) caseCollectionSet.insert( ensemble );
+    }
+
+    for ( auto sumCase : caseSet )
+    {
+        sumCases.push_back( sumCase );
+    }
+    for ( auto sumCaseCollection : caseCollectionSet )
+    {
+        sumCaseCollections.push_back( sumCaseCollection );
+    }
+
+    auto newSummaryPlot = RicSummaryPlotTemplateTools::createMultiPlotFromTemplateFile( fileName );
+    if ( newSummaryPlot )
+    {
+        auto proj        = RimProject::current();
+        auto collections = proj->mainPlotCollection()->summaryMultiPlotCollection();
+
+        collections->addSummaryMultiPlot( newSummaryPlot );
+        newSummaryPlot->resolveReferencesRecursively();
+
+        RicSummaryPlotTemplateTools::setValuesForPlaceholders( newSummaryPlot,
+                                                               sumCases,
+                                                               sumCaseCollections,
+                                                               wellNames,
+                                                               wellGroupNames,
+                                                               regions );
+        newSummaryPlot->initAfterReadRecursively();
+        newSummaryPlot->loadDataAndUpdate();
+        collections->updateConnectedEditors();
+    }
+
+    return newSummaryPlot;
+}
 
 //--------------------------------------------------------------------------------------------------
 ///

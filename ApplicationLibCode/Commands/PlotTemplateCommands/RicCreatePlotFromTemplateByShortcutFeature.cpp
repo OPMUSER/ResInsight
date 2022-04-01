@@ -22,10 +22,10 @@
 #include "RiaPreferences.h"
 
 #include "RicSummaryPlotTemplateTools.h"
-
-#include "RimSummaryCase.h"
+#include "RimSummaryMultiPlot.h"
 
 #include "RiuPlotMainWindow.h"
+#include "RiuPlotMainWindowTools.h"
 
 #include "cafSelectionManager.h"
 
@@ -40,10 +40,7 @@ CAF_CMD_SOURCE_INIT( RicCreatePlotFromTemplateByShortcutFeature, "RicCreatePlotF
 //--------------------------------------------------------------------------------------------------
 bool RicCreatePlotFromTemplateByShortcutFeature::isCommandEnabled()
 {
-    bool anySummaryCases           = !RicSummaryPlotTemplateTools::selectedSummaryCases().empty();
-    bool anySummaryCaseCollections = !RicSummaryPlotTemplateTools::selectedSummaryCaseCollections().empty();
-
-    return ( anySummaryCases || anySummaryCaseCollections );
+    return true;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -70,11 +67,9 @@ void RicCreatePlotFromTemplateByShortcutFeature::onActionTriggered( bool isCheck
         fileName = fileNameSelectedInUi;
     }
 
-    auto sumCases           = RicSummaryPlotTemplateTools::selectedSummaryCases();
-    auto sumCaseCollections = RicSummaryPlotTemplateTools::selectedSummaryCaseCollections();
+    auto newSummaryPlot = RicSummaryPlotTemplateTools::createMultiPlotFromTemplateAndSelection( fileName );
 
-    RimSummaryPlot* newSummaryPlot = RicSummaryPlotTemplateTools::createPlotFromTemplateFile( fileName );
-    RicSummaryPlotTemplateTools::appendSummaryPlotToPlotCollection( newSummaryPlot, sumCases, sumCaseCollections );
+    if ( newSummaryPlot ) RiuPlotMainWindowTools::selectAsCurrentItem( newSummaryPlot );
 }
 
 //--------------------------------------------------------------------------------------------------

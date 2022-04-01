@@ -41,6 +41,7 @@ class RimSummaryAddressCollection;
 class RicSummaryPlotTemplateTools
 {
 public:
+    static RimSummaryMultiPlot* createMultiPlotFromTemplateAndSelection( const QString& fileName );
     static RimSummaryMultiPlot* createMultiPlotFromTemplateFile( const QString& fileName );
 
     static void setValuesForPlaceholders( RimSummaryMultiPlot*                          summaryMultiPlot,

@@ -1049,6 +1049,7 @@ caf::CmdFeatureMenuBuilder RimContextCommandBuilder::commandsFromSelection()
         else if ( dynamic_cast<RimSummaryAddressCollection*>( firstUiItem ) )
         {
             menuBuilder << "RicCreateMultiPlotFromSelectionFeature";
+            menuBuilder << "RicCreatePlotFromTemplateByShortcutFeature";
         }
 
         if ( dynamic_cast<Rim3dView*>( firstUiItem ) )
@@ -1113,7 +1114,7 @@ caf::CmdFeatureMenuBuilder RimContextCommandBuilder::commandsFromSelection()
 
         if ( dynamic_cast<RimSummaryCase*>( firstUiItem ) || dynamic_cast<RimSummaryCaseCollection*>( firstUiItem ) )
         {
-            menuBuilder << "RicCreatePlotFromSelectionFeature";
+            menuBuilder << "RicCreateMultiPlotFromSelectionFeature";
             menuBuilder << "RicCreatePlotFromTemplateByShortcutFeature";
         }
 
