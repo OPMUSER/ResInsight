@@ -43,7 +43,8 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-CAF_CMD_SOURCE_INIT( RicSavePlotTemplateFeature, "RicSavePlotTemplateFeature" );
+// TODO: Delete this feature
+CAF_CMD_SOURCE_INIT( RicSavePlotTemplateFeature, "OBSOLETE_RicSavePlotTemplateFeature" );
 
 //--------------------------------------------------------------------------------------------------
 ///
