@@ -108,9 +108,9 @@ void RimPlotTemplateFolderItem::searchForFileAndFolderNames()
 
     if ( m_folderName().path().isEmpty() )
     {
-        for ( size_t i = 0; i < m_subFolders.size(); ++i )
+        for ( const auto& subFolder : m_subFolders )
         {
-            if ( m_subFolders[i] ) m_subFolders[i]->searchForFileAndFolderNames();
+            if ( subFolder ) subFolder->searchForFileAndFolderNames();
         }
         return;
     }
@@ -127,15 +127,39 @@ void RimPlotTemplateFolderItem::searchForFileAndFolderNames()
         nameFilters << "*.rpt";
         QStringList fileList = caf::Utils::getFilesInDirectory( m_folderName().path(), nameFilters, true );
 
+        // Search the first lines for a valid token. This logic can be extended to also search for version string
+        // info in RimMultiPlot::m_projectFileVersionString
+        const size_t  maxLineCount = 50;
+        const QString tokenToFind  = "<MultiSummaryPlot>";
+
         for ( int i = 0; i < fileList.size(); i++ )
         {
             const QString& fileName = fileList.at( i );
 
             if ( caf::Utils::fileExists( fileName ) )
             {
-                RimPlotTemplateFileItem* fileItem = new RimPlotTemplateFileItem();
-                fileItem->setFilePath( fileName );
-                m_fileNames.push_back( fileItem );
+                QFile inputFile( fileName );
+                bool  isValidTemplate = false;
+                if ( inputFile.open( QIODevice::ReadOnly ) )
+                {
+                    QTextStream in( &inputFile );
+                    size_t      lineCount = 0;
+                    while ( !isValidTemplate && ( lineCount < maxLineCount ) && !in.atEnd() )
+                    {
+                        QString line = in.readLine();
+                        lineCount++;
+
+                        if ( line.contains( tokenToFind, Qt::CaseInsensitive ) ) isValidTemplate = true;
+                    }
+                    inputFile.close();
+                }
+
+                if ( isValidTemplate )
+                {
+                    auto* fileItem = new RimPlotTemplateFileItem();
+                    fileItem->setFilePath( fileName );
+                    m_fileNames.push_back( fileItem );
+                }
             }
         }
     }
@@ -181,7 +205,7 @@ void RimPlotTemplateFolderItem::defineEditorAttribute( const caf::PdmFieldHandle
 {
     if ( field == &m_folderName )
     {
-        caf::PdmUiFilePathEditorAttribute* myAttr = dynamic_cast<caf::PdmUiFilePathEditorAttribute*>( attribute );
+        auto* myAttr = dynamic_cast<caf::PdmUiFilePathEditorAttribute*>( attribute );
         if ( myAttr )
         {
             myAttr->m_selectDirectory = true;
@@ -228,7 +252,7 @@ void RimPlotTemplateFolderItem::createSubFolderItemsFromFolderPaths( const QStri
 {
     for ( const auto& path : folderPaths )
     {
-        RimPlotTemplateFolderItem* scriptLocation = new RimPlotTemplateFolderItem();
+        auto* scriptLocation = new RimPlotTemplateFolderItem();
         scriptLocation->setFolderPath( path );
         scriptLocation->searchForFileAndFolderNames();
 
